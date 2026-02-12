@@ -1,10 +1,10 @@
 package com.example.ostadmart.dto;
 
-import jakarta.validation.constraints.Min;
 import lombok.Data;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.Min;
 import com.example.ostadmart.model.Category;
 import jakarta.validation.constraints.NotBlank;
 
