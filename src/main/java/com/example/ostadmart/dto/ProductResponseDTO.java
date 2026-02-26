@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import jakarta.validation.constraints.Min;
-import com.example.ostadmart.model.Category;
+import com.example.ostadmart.models.Category;
 import jakarta.validation.constraints.NotBlank;
 
 @Data

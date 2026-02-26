@@ -1,32 +1,33 @@
-package com.example.ostadmart.controller;
+package com.example.ostadmart.controllers;
+
+import java.util.List;
 
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 // Local Imports
 import com.example.ostadmart.dto.ProductRequestDTO;
 import com.example.ostadmart.dto.ProductResponseDTO;
-
-import java.util.List;
+import com.example.ostadmart.services.ProductService;
 
 @RestController
 @RequestMapping(path = "/api/products")
 public class ProductController {
 
+    private final ProductService productService;
+
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
+
     @PostMapping
     public ResponseEntity<ProductResponseDTO> createProduct(@Valid @RequestBody ProductRequestDTO product) {
-        ProductResponseDTO productResponseDTO = ProductResponseDTO
-                .builder()
-                .name(product.getName())
-                .description(product.getDescription())
-                .category(product.getCategory())
-                .price(product.getPrice())
-                .qty_left(product.getQty_left())
-                .product_photo(product.getProduct_photo())
-                .build();
 
-        return ResponseEntity.ok(productResponseDTO);
+        ProductResponseDTO productResponseDTO = productService.createProduct(product);
+        return new ResponseEntity<>(productResponseDTO, HttpStatus.CREATED);
+
     }
 
     @GetMapping

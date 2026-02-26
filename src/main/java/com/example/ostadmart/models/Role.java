@@ -1,4 +1,4 @@
-package com.example.ostadmart.model;
+package com.example.ostadmart.models;
 
 public enum Role {
     USER,

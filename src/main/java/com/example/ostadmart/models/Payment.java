@@ -1,31 +1,33 @@
-package com.example.ostadmart.model;
+package com.example.ostadmart.models;
 
 import lombok.Builder;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "order_items")
-public class OrderItem {
+@Table(name = "payments")
+public class Payment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    private String status;
+
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "product_id")
-    private Product product;
+    private String transaction_type;
 
-    private Double unit_price;
+    private Double total_amount;
 
-    private Integer qty;
+    private LocalDateTime transaction_time;
 
 }

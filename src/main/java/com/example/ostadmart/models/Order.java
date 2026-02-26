@@ -1,4 +1,4 @@
-package com.example.ostadmart.model;
+package com.example.ostadmart.models;
 
 import lombok.Builder;
 import jakarta.persistence.*;
@@ -20,7 +20,7 @@ public class Order {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private UserEntity userEntity;
 
     private Double total_amount;
 
