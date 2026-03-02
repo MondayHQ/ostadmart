@@ -4,21 +4,23 @@ import lombok.Data;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-
-// Local Imports
+import jakarta.validation.constraints.Min;
 import com.example.ostadmart.models.Category;
+import jakarta.validation.constraints.NotBlank;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductResponseDTO implements ProductResponse {
+public class ProductCREATERequestDTO {
 
-    private Long id;
+    @NotBlank
     private String name;
     private String description;
     private Category category;
     private double price;
+
+    @Min(value = 0, message = "Negative value is not allowed")
     private Integer qty_left;
     private String product_photo;
 

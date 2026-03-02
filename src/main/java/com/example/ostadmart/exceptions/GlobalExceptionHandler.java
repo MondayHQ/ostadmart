@@ -36,6 +36,18 @@ public class GlobalExceptionHandler {
                 );
     }
 
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ResponseEntity<CustomErrorResponse> handleProductNotFoundException(ProductNotFoundException e) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(
+                        new CustomErrorResponse(
+                                HttpStatus.NOT_FOUND.value(),
+                                e.getMessage()
+                        )
+                );
+    }
+
     @ExceptionHandler
     public ResponseEntity<String> handleException(Exception exception) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.getMessage());

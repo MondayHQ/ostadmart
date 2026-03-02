@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 // Local Imports
-import com.example.ostadmart.dto.ProductRequestDTO;
-import com.example.ostadmart.dto.ProductResponseDTO;
+import com.example.ostadmart.dto.*;
 import com.example.ostadmart.services.ProductService;
+import com.example.ostadmart.exceptions.ProductNotFoundException;
 
 @RestController
 @RequestMapping(path = "/api/products")
@@ -25,19 +25,45 @@ public class ProductController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ProductResponseDTO> createProduct(@Valid @RequestBody ProductRequestDTO product) {
+    public ResponseEntity<ProductResponseDTOAdmin> createProduct(@Valid @RequestBody ProductCREATERequestDTO product) {
 
-        ProductResponseDTO productResponseDTO = productService.createProduct(product);
-        return new ResponseEntity<>(productResponseDTO, HttpStatus.CREATED);
+        ProductResponseDTOAdmin productResponseDTOAdmin = productService.createProduct(product);
+        return new ResponseEntity<>(productResponseDTOAdmin, HttpStatus.CREATED);
 
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductResponseDTO>> getAllProducts() {
+    public ResponseEntity<List<? extends ProductResponse>> getAllProducts() {
+        List<? extends ProductResponse> products = productService.getAllProducts();
 
-        List<ProductResponseDTO> products = List.of();
         return ResponseEntity.ok(products);
+    }
 
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<ProductResponse> getProductById(@PathVariable Long id) throws ProductNotFoundException {
+        return ResponseEntity.ok(productService.getProductById(id));
+    }
+
+    @PostMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ProductUPDATEResponseDTO> updateProductById(
+            @PathVariable Long id,
+            @Valid @RequestBody ProductUPDATERequestDTO productUPDATERequestDTO
+    ) throws ProductNotFoundException {
+        ProductUPDATEResponseDTO productUPDATEResponseDTO = productService
+                .updateProductById(
+                        id,
+                        productUPDATERequestDTO
+                );
+
+        return ResponseEntity.ok(productUPDATEResponseDTO);
+    }
+
+    @DeleteMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteProductById(@PathVariable Long id) throws ProductNotFoundException {
+        productService.deleteProductById(id);
     }
 
 }

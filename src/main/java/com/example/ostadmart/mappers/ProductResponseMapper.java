@@ -1,30 +1,32 @@
-package com.example.ostadmart.mappers.impl;
+package com.example.ostadmart.mappers;
 
 import org.modelmapper.ModelMapper;
-import com.example.ostadmart.mappers.Mapper;
 import org.springframework.stereotype.Component;
 
 // Local Imports
 import com.example.ostadmart.models.ProductEntity;
 import com.example.ostadmart.dto.ProductResponseDTO;
+import com.example.ostadmart.dto.ProductResponseDTOAdmin;
 
 @Component
-public class ProductResponseMapperImpl implements Mapper<ProductEntity, ProductResponseDTO> {
+public class ProductResponseMapper {
 
     private final ModelMapper modelMapper;
 
-    public ProductResponseMapperImpl(ModelMapper modelMapper) {
+    public ProductResponseMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }
 
-    @Override
     public ProductEntity mapToEntity(ProductResponseDTO productResponseDTO) {
         return modelMapper.map(productResponseDTO, ProductEntity.class);
     }
 
-    @Override
-    public ProductResponseDTO mapToDTO(ProductEntity productEntity) {
+    public ProductResponseDTO mapToResponseDTO(ProductEntity productEntity) {
         return modelMapper.map(productEntity, ProductResponseDTO.class);
+    }
+
+    public ProductResponseDTOAdmin mapToResponseDTOAdmin(ProductEntity productEntity) {
+        return modelMapper.map(productEntity, ProductResponseDTOAdmin.class);
     }
 
 }

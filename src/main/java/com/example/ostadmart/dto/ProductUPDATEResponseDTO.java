@@ -1,9 +1,6 @@
 package com.example.ostadmart.dto;
 
-import lombok.Data;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
 
 // Local Imports
 import com.example.ostadmart.models.Category;
@@ -12,7 +9,7 @@ import com.example.ostadmart.models.Category;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductResponseDTO implements ProductResponse {
+public class ProductUPDATEResponseDTO {
 
     private Long id;
     private String name;
@@ -21,5 +18,8 @@ public class ProductResponseDTO implements ProductResponse {
     private double price;
     private Integer qty_left;
     private String product_photo;
+
+    private UserDTO created_by;
+    private UserDTO updated_by;
 
 }
