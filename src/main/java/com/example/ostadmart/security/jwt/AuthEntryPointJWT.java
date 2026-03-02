@@ -14,6 +14,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 // Local Imports
 import com.example.ostadmart.exceptions.InvalidJWTTokenResponse;
 
+
 @Component
 public class AuthEntryPointJWT implements AuthenticationEntryPoint {
 

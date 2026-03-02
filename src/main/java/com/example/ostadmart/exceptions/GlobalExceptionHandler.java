@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -18,6 +19,19 @@ public class GlobalExceptionHandler {
                                 .builder()
                                 .status(HttpStatus.UNAUTHORIZED.value())
                                 .message("Username or password is incorrect")
+                                .build()
+                );
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<AuthenticationFailedResponse> handleAuthorizationDeniedException(AuthorizationDeniedException e) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(
+                        AuthenticationFailedResponse
+                                .builder()
+                                .status(HttpStatus.FORBIDDEN.value())
+                                .message("Action not authorized")
                                 .build()
                 );
     }

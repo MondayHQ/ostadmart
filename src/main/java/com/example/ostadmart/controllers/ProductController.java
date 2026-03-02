@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 // Local Imports
 import com.example.ostadmart.dto.ProductRequestDTO;
@@ -23,6 +24,7 @@ public class ProductController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ProductResponseDTO> createProduct(@Valid @RequestBody ProductRequestDTO product) {
 
         ProductResponseDTO productResponseDTO = productService.createProduct(product);
@@ -32,9 +34,10 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<List<ProductResponseDTO>> getAllProducts() {
-        List<ProductResponseDTO> products = List.of();
 
+        List<ProductResponseDTO> products = List.of();
         return ResponseEntity.ok(products);
+
     }
 
 }

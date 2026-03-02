@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
+
 @Component
 public class JWTAuthFilter extends OncePerRequestFilter {
 
@@ -39,7 +40,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             token = authorizationHeader.substring(7);
-            username = jwtUtils.getUsernameFromToken(token); // Implement This Method
+            username = jwtUtils.getUsernameFromToken(token);
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
