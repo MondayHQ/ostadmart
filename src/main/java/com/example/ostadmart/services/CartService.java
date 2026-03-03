@@ -122,26 +122,23 @@ public class CartService {
     }
 
     @Transactional
-    public CartItemResponseDTO updateCartItem(UpdateCartItemRequestDTO updateCartItemRequestDTO) throws ProductNotFoundException, InsufficientStockException {
+    public CartItemResponseDTO updateCartItem(
+            Long id,
+            UpdateCartItemRequestDTO updateCartItemRequestDTO
+    ) throws ProductNotFoundException, InsufficientStockException {
 
         // GET Authenticated user
         UserEntity userEntity = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        // GET Product
-        ProductEntity productEntity = productRepository
-                .findById(updateCartItemRequestDTO.getProductId())
-                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
 
         // GET cart
         CartEntity cartEntity = cartRepository.findByUserEntity(userEntity);
 
         // Find the cart item
         CartItemEntity existingCartItemEntity = cartItemRepository
-                .findByCartEntityAndProductEntity(cartEntity, productEntity)
-                .orElseThrow(() -> new ProductNotFoundException("Product not found in the cart"));
+                .findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Item not found in the cart"));
 
-
-        if (productEntity.getQty_left() < updateCartItemRequestDTO.getQty()) {
+        if (existingCartItemEntity.getProductEntity().getQty_left() < updateCartItemRequestDTO.getQty()) {
             throw new InsufficientStockException("Not enough stock available");
         }
 
@@ -155,23 +152,18 @@ public class CartService {
     }
 
     @Transactional
-    public void removeCartItem(Long productId) throws ProductNotFoundException {
+    public void removeCartItem(Long id) throws ProductNotFoundException {
 
         // GET Authenticated user
         UserEntity userEntity = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        // GET Product
-        ProductEntity productEntity = productRepository
-                .findById(productId)
-                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
 
         // GET cart
         CartEntity cartEntity = cartRepository.findByUserEntity(userEntity);
 
         // Find the cart item
         CartItemEntity existingCartItemEntity = cartItemRepository
-                .findByCartEntityAndProductEntity(cartEntity, productEntity)
-                .orElseThrow(() -> new ProductNotFoundException("Product not found in the cart"));
+                .findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Item not found in the cart"));
 
         cartItemRepository.delete(existingCartItemEntity);
         cartItemRepository.flush();

@@ -1,5 +1,7 @@
 package com.example.ostadmart.controllers;
 
+import java.util.List;
+
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,8 +15,6 @@ import com.example.ostadmart.dto.UpdateCartItemRequestDTO;
 import com.example.ostadmart.exceptions.ProductNotFoundException;
 import com.example.ostadmart.exceptions.InsufficientStockException;
 
-import java.util.List;
-
 @RestController
 @RequestMapping(path = "/api/cart")
 public class CartController {
@@ -25,14 +25,14 @@ public class CartController {
         this.cartService = cartService;
     }
 
-    @GetMapping
+    @GetMapping(path = "/items")
     public ResponseEntity<List<CartItemResponseDTO>> getAllCartItems() {
         List<CartItemResponseDTO> cartItemResponseDTOS = cartService.getAllCartItems();
 
         return new ResponseEntity<>(cartItemResponseDTOS, HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping(path = "/items")
     public ResponseEntity<CartItemResponseDTO> addProductToCart(
             @Valid @RequestBody AddToCartRequestDTO addToCartRequestDTO
     ) throws InsufficientStockException, ProductNotFoundException {
@@ -41,21 +41,22 @@ public class CartController {
         return ResponseEntity.ok(cartItemResponseDTO);
     }
 
-    @PutMapping
+    @PutMapping(path = "/items/{id}")
     public ResponseEntity<CartItemResponseDTO> updateCartItem(
+            @PathVariable Long id,
             @Valid @RequestBody UpdateCartItemRequestDTO updateCartItemRequestDTO
     ) throws ProductNotFoundException, InsufficientStockException {
-        CartItemResponseDTO cartItemResponseDTO = cartService.updateCartItem(updateCartItemRequestDTO);
+        CartItemResponseDTO cartItemResponseDTO = cartService.updateCartItem(id, updateCartItemRequestDTO);
         return ResponseEntity.ok(cartItemResponseDTO);
     }
 
-    @DeleteMapping(path = "/{id}")
+    @DeleteMapping(path = "/items/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCartItem(@PathVariable Long id) throws ProductNotFoundException {
         cartService.removeCartItem(id);
     }
 
-    @DeleteMapping
+    @DeleteMapping(path = "/items")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void clearCart() {
         cartService.clearCart();
