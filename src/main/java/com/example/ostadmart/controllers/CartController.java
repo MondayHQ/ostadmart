@@ -1,6 +1,7 @@
 package com.example.ostadmart.controllers;
 
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,6 +38,18 @@ public class CartController {
     ) throws ProductNotFoundException, InsufficientStockException {
         CartItemResponseDTO cartItemResponseDTO = cartService.updateCartItem(updateCartItemRequestDTO);
         return ResponseEntity.ok(cartItemResponseDTO);
+    }
+
+    @DeleteMapping(path = "/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteCartItem(@PathVariable Long id) throws ProductNotFoundException {
+        cartService.removeCartItem(id);
+    }
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void clearCart() {
+        cartService.clearCart();
     }
 
 }

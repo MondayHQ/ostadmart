@@ -128,9 +128,53 @@ public class CartService {
         }
 
         existingCartItemEntity.setQty(updateCartItemRequestDTO.getQty());
+        cartItemRepository.flush();
+
         cartEntity.setTotal_amount(cartItemRepository.getTotalAmountByCartId(cartEntity.getId()));
 
         return cartItemMapper.mapToResponseDTO(existingCartItemEntity);
+
+    }
+
+    @Transactional
+    public void removeCartItem(Long productId) throws ProductNotFoundException {
+
+        // GET Authenticated user
+        UserEntity userEntity = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // GET Product
+        ProductEntity productEntity = productRepository
+                .findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+
+        // GET cart
+        CartEntity cartEntity = cartRepository.findByUserEntity(userEntity);
+
+        // Find the cart item
+        CartItemEntity existingCartItemEntity = cartItemRepository
+                .findByCartEntityAndProductEntity(cartEntity, productEntity)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found in the cart"));
+
+        cartItemRepository.delete(existingCartItemEntity);
+        cartItemRepository.flush();
+
+        cartEntity.setTotal_amount(cartItemRepository.getTotalAmountByCartId(cartEntity.getId()));
+
+    }
+
+    @Transactional
+    public void clearCart() {
+
+        // GET Authenticated user
+        UserEntity userEntity = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // GET cart
+        CartEntity cartEntity = cartRepository.findByUserEntity(userEntity);
+
+        cartItemRepository.removeAllCartItemsByCartId(cartEntity.getId());
+        cartRepository.flush();
+
+        cartEntity.setTotal_amount(cartItemRepository.getTotalAmountByCartId(cartEntity.getId()));
 
     }
 
