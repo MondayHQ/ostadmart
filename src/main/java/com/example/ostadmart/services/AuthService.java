@@ -22,6 +22,7 @@ import com.example.ostadmart.repositories.AuthRepository;
 public class AuthService {
 
     private final JWTUtils jwtUtils;
+    private final CartService cartService;
     private final AuthRepository authRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -31,6 +32,7 @@ public class AuthService {
 
     public AuthService(
             JWTUtils jwtUtils,
+            CartService cartService,
             AuthRepository authRepository,
             PasswordEncoder passwordEncoder,
             AuthenticationManager authenticationManager,
@@ -39,6 +41,7 @@ public class AuthService {
             Mapper<UserEntity, RegisterResponseDTO> registerResponseMapper
     ) {
         this.jwtUtils = jwtUtils;
+        this.cartService = cartService;
         this.authRepository = authRepository;
         this.passwordEncoder = passwordEncoder;
         this.userDetailsService = userDetailsService;
@@ -56,6 +59,9 @@ public class AuthService {
         userEntity.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
 
         UserEntity savedUserEntity = authRepository.save(userEntity);
+
+        // ---------- CREATE cart ----------
+        cartService.createCart(savedUserEntity);
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(savedUserEntity.getEmail());
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
