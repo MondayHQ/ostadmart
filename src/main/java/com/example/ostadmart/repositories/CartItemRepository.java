@@ -1,7 +1,9 @@
 package com.example.ostadmart.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
+import com.example.ostadmart.models.UserEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,6 +19,8 @@ import com.example.ostadmart.models.CartItemEntity;
 public interface CartItemRepository extends JpaRepository<CartItemEntity, Long> {
 
     Optional<CartItemEntity> findByCartEntityAndProductEntity(CartEntity cartEntity, ProductEntity productEntity);
+
+    List<CartItemEntity> findAllByCartEntity(CartEntity cartEntity);
 
     @Query("SELECT COALESCE(SUM(A.unit_price * A.qty), 0.0) FROM CartItemEntity A WHERE A.cartEntity.id=:cartId")
     Double getTotalAmountByCartId(@Param("cartId") Long cartId);

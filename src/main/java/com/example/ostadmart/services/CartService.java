@@ -1,5 +1,6 @@
 package com.example.ostadmart.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import jakarta.transaction.Transactional;
@@ -79,6 +80,8 @@ public class CartService {
                 .map((item) -> {
 
                     item.setQty(requestedTotal);
+                    cartItemRepository.flush();
+
                     cartEntity.setTotal_amount(cartItemRepository.getTotalAmountByCartId(cartEntity.getId()));
 
                     return item;
@@ -93,13 +96,28 @@ public class CartService {
                             .qty(addToCartRequestDTO.getQty())
                             .build();
 
+                    CartItemEntity savedCartItemEntity = cartItemRepository.save(newCartItemEntity);
                     cartEntity.setTotal_amount(cartItemRepository.getTotalAmountByCartId(cartEntity.getId()));
 
-                    return cartItemRepository.save(newCartItemEntity);
+                    return savedCartItemEntity;
 
                 });
 
         return cartItemMapper.mapToResponseDTO(cartItemEntity);
+
+    }
+
+    public List<CartItemResponseDTO> getAllCartItems() {
+
+        // GET Authenticated user
+        UserEntity userEntity = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // GET cart
+        CartEntity cartEntity = cartRepository.findByUserEntity(userEntity);
+
+        List<CartItemEntity> cartItemEntities = cartItemRepository.findAllByCartEntity(cartEntity);
+
+        return cartItemEntities.stream().map(cartItemMapper::mapToResponseDTO).toList();
 
     }
 

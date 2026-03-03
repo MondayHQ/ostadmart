@@ -13,6 +13,8 @@ import com.example.ostadmart.dto.UpdateCartItemRequestDTO;
 import com.example.ostadmart.exceptions.ProductNotFoundException;
 import com.example.ostadmart.exceptions.InsufficientStockException;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(path = "/api/cart")
 public class CartController {
@@ -21,6 +23,13 @@ public class CartController {
 
     public CartController(CartService cartService) {
         this.cartService = cartService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<CartItemResponseDTO>> getAllCartItems() {
+        List<CartItemResponseDTO> cartItemResponseDTOS = cartService.getAllCartItems();
+
+        return new ResponseEntity<>(cartItemResponseDTOS, HttpStatus.OK);
     }
 
     @PostMapping
