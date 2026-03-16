@@ -16,12 +16,14 @@ public class CartEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private UserEntity userEntity;
 
-    private Double total_amount;
+    @Column(name = "total_amount")
+    private Double totalAmount;
 
 }

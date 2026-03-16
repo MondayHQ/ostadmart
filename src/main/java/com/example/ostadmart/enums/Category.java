@@ -1,4 +1,4 @@
-package com.example.ostadmart.models;
+package com.example.ostadmart.enums;
 
 public enum Category {
     Mobile,

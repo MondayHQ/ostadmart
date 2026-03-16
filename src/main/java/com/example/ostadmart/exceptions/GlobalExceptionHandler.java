@@ -18,7 +18,7 @@ public class GlobalExceptionHandler {
                         AuthenticationFailedResponse
                                 .builder()
                                 .status(HttpStatus.UNAUTHORIZED.value())
-                                .message("Username or password is incorrect")
+                                .message("Bad credentials")
                                 .build()
                 );
     }
@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
                         AuthenticationFailedResponse
                                 .builder()
                                 .status(HttpStatus.FORBIDDEN.value())
-                                .message("Action not authorized")
+                                .message("Access Denied")
                                 .build()
                 );
     }

@@ -15,6 +15,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+// Local Imports
+import com.example.ostadmart.enums.Role;
+
 @Data
 @Entity
 @Builder

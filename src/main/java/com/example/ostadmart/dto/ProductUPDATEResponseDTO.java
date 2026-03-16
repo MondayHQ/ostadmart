@@ -3,7 +3,7 @@ package com.example.ostadmart.dto;
 import lombok.*;
 
 // Local Imports
-import com.example.ostadmart.models.Category;
+import com.example.ostadmart.enums.Category;
 
 @Data
 @Builder

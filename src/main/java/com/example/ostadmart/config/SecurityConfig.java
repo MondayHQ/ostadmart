@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,6 +18,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 
 // Local Imports
 import com.example.ostadmart.security.jwt.JWTAuthFilter;
+import com.example.ostadmart.repositories.AuthRepository;
 import com.example.ostadmart.security.jwt.AuthEntryPointJWT;
 
 @Configuration
@@ -29,9 +29,24 @@ public class SecurityConfig {
     private final JWTAuthFilter jwtAuthFilter;
     private final AuthEntryPointJWT authEntryPointJWT;
 
-    public SecurityConfig(JWTAuthFilter jwtAuthFilter, AuthEntryPointJWT authEntryPointJWT) {
+    public SecurityConfig(AuthRepository authRepository, JWTAuthFilter jwtAuthFilter, AuthEntryPointJWT authEntryPointJWT) {
         this.jwtAuthFilter = jwtAuthFilter;
         this.authEntryPointJWT = authEntryPointJWT;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider(userDetailsService);
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
+
+        return daoAuthenticationProvider;
+
     }
 
     @Bean
@@ -46,32 +61,6 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
-    }
-
-    @Bean
-    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
-
-        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-
-        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
-        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
-
-        return daoAuthenticationProvider;
-
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-
-        return new BCryptPasswordEncoder();
-
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-
-        return authenticationConfiguration.getAuthenticationManager();
-
     }
 
 }

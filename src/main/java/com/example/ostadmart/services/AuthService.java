@@ -4,11 +4,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 // Local Imports
-import com.example.ostadmart.models.Role;
+import com.example.ostadmart.enums.Role;
 import com.example.ostadmart.mappers.Mapper;
 import com.example.ostadmart.models.UserEntity;
 import com.example.ostadmart.dto.AuthRequestDTO;
@@ -25,8 +26,8 @@ public class AuthService {
     private final CartService cartService;
     private final AuthRepository authRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
-    private final OstadMartUserDetailsService userDetailsService;
     private final Mapper<UserEntity, RegisterRequestDTO> registerRequestMapper;
     private final Mapper<UserEntity, RegisterResponseDTO> registerResponseMapper;
 
@@ -35,8 +36,8 @@ public class AuthService {
             CartService cartService,
             AuthRepository authRepository,
             PasswordEncoder passwordEncoder,
+            UserDetailsService userDetailsService,
             AuthenticationManager authenticationManager,
-            OstadMartUserDetailsService userDetailsService,
             Mapper<UserEntity, RegisterRequestDTO> registerRequestMapper,
             Mapper<UserEntity, RegisterResponseDTO> registerResponseMapper
     ) {

@@ -46,7 +46,7 @@ public class CartService {
 
         CartEntity cartEntity = new CartEntity();
         cartEntity.setUserEntity(userEntity);
-        cartEntity.setTotal_amount(0.0);
+        cartEntity.setTotalAmount(0.0);
 
         cartRepository.save(cartEntity);
     }
@@ -82,7 +82,7 @@ public class CartService {
                     item.setQty(requestedTotal);
                     cartItemRepository.flush();
 
-                    cartEntity.setTotal_amount(cartItemRepository.getTotalAmountByCartId(cartEntity.getId()));
+                    cartEntity.setTotalAmount(cartItemRepository.getTotalAmountByCartId(cartEntity.getId()));
 
                     return item;
 
@@ -97,7 +97,7 @@ public class CartService {
                             .build();
 
                     CartItemEntity savedCartItemEntity = cartItemRepository.save(newCartItemEntity);
-                    cartEntity.setTotal_amount(cartItemRepository.getTotalAmountByCartId(cartEntity.getId()));
+                    cartEntity.setTotalAmount(cartItemRepository.getTotalAmountByCartId(cartEntity.getId()));
 
                     return savedCartItemEntity;
 
@@ -145,7 +145,7 @@ public class CartService {
         existingCartItemEntity.setQty(updateCartItemRequestDTO.getQty());
         cartItemRepository.flush();
 
-        cartEntity.setTotal_amount(cartItemRepository.getTotalAmountByCartId(cartEntity.getId()));
+        cartEntity.setTotalAmount(cartItemRepository.getTotalAmountByCartId(cartEntity.getId()));
 
         return cartItemMapper.mapToResponseDTO(existingCartItemEntity);
 
@@ -168,7 +168,7 @@ public class CartService {
         cartItemRepository.delete(existingCartItemEntity);
         cartItemRepository.flush();
 
-        cartEntity.setTotal_amount(cartItemRepository.getTotalAmountByCartId(cartEntity.getId()));
+        cartEntity.setTotalAmount(cartItemRepository.getTotalAmountByCartId(cartEntity.getId()));
 
     }
 
@@ -184,7 +184,7 @@ public class CartService {
         cartItemRepository.removeAllCartItemsByCartId(cartEntity.getId());
         cartRepository.flush();
 
-        cartEntity.setTotal_amount(cartItemRepository.getTotalAmountByCartId(cartEntity.getId()));
+        cartEntity.setTotalAmount(cartItemRepository.getTotalAmountByCartId(cartEntity.getId()));
 
     }
 

@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 // Local Imports
-import com.example.ostadmart.models.Role;
+import com.example.ostadmart.enums.Role;
 
 @Data
 @Builder

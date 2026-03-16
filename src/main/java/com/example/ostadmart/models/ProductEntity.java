@@ -6,6 +6,9 @@ import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+// Local Imports
+import com.example.ostadmart.enums.Category;
+
 @Data
 @Entity
 @Builder

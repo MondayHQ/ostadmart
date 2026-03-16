@@ -2,8 +2,9 @@ package com.example.ostadmart.security.jwt;
 
 import java.io.IOException;
 
-import jakarta.servlet.ServletException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
@@ -14,24 +15,25 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 // Local Imports
 import com.example.ostadmart.exceptions.InvalidJWTTokenResponse;
 
-
 @Component
+@RequiredArgsConstructor
 public class AuthEntryPointJWT implements AuthenticationEntryPoint {
+
+    private final ObjectMapper mapper;
 
     @Override
     public void commence(
             HttpServletRequest request,
             HttpServletResponse response,
             AuthenticationException authException
-    ) throws IOException, ServletException {
+    ) throws IOException {
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-        final ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(response.getOutputStream(), new InvalidJWTTokenResponse(
-                401,
-                "Invalid token"
+                HttpStatus.UNAUTHORIZED.value(),
+                "Unauthorized"
         ));
     }
 
