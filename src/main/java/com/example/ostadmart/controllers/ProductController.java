@@ -2,6 +2,7 @@ package com.example.ostadmart.controllers;
 
 import java.util.List;
 
+import com.example.ostadmart.exceptions.UserNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class ProductController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ProductResponseDTOAdmin> createProduct(@Valid @RequestBody ProductCREATERequestDTO product) {
+    public ResponseEntity<ProductResponseDTOAdmin> createProduct(@Valid @RequestBody ProductCREATERequestDTO product) throws UserNotFoundException {
 
         ProductResponseDTOAdmin productResponseDTOAdmin = productService.createProduct(product);
         return new ResponseEntity<>(productResponseDTOAdmin, HttpStatus.CREATED);

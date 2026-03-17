@@ -1,5 +1,6 @@
 package com.example.ostadmart.security.jwt;
 
+import java.util.List;
 import java.io.IOException;
 
 import lombok.NonNull;
@@ -10,10 +11,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
@@ -22,11 +24,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 public class JWTAuthFilter extends OncePerRequestFilter {
 
     private final JWTUtils jwtUtils;
-    private final UserDetailsService userDetailsService;
 
-    public JWTAuthFilter(JWTUtils jwtUtils, UserDetailsService userDetailsService, UserDetailsService userDetailsService1) {
+    public JWTAuthFilter(JWTUtils jwtUtils) {
         this.jwtUtils = jwtUtils;
-        this.userDetailsService = userDetailsService1;
     }
 
     @Override
@@ -49,19 +49,28 @@ public class JWTAuthFilter extends OncePerRequestFilter {
             if (SecurityContextHolder.getContext().getAuthentication() == null) {
 
                 Claims payload = jwtUtils.validateToken(token);
+
                 String username = payload.getSubject();
+                @SuppressWarnings("unchecked")
+                List<String> roles = payload.get("roles", List.class);
 
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                if (username != null && roles != null) {
 
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities()
-                );
+                    List<SimpleGrantedAuthority> authorities = roles
+                            .stream()
+                            .map(SimpleGrantedAuthority::new)
+                            .toList();
 
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                    UserDetails userDetails = new User(username, "", authorities);
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
 
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
         } catch (Exception ex) {
             logger.error("JWT Authentication Failed", ex);

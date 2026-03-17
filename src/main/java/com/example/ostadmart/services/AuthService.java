@@ -86,14 +86,16 @@ public class AuthService {
                 ));
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        UserEntity userEntity = (UserEntity) userDetails;
+
+        String email = userDetails.getUsername();
+        String role = userDetails.getAuthorities().iterator().next().getAuthority();
 
         String authToken = jwtUtils.generateToken(authentication);
 
         return AuthResponseDTO
                 .builder()
-                .email(userEntity.getEmail())
-                .role(userEntity.getRole().toString())
+                .email(email)
+                .role(role)
                 .token(authToken)
                 .build();
     }

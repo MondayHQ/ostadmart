@@ -1,6 +1,7 @@
 package com.example.ostadmart.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.example.ostadmart.dto.*;
 import jakarta.transaction.Transactional;
@@ -12,41 +13,49 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 // Local Imports
 import com.example.ostadmart.models.ProductEntity;
+import com.example.ostadmart.repositories.AuthRepository;
 import com.example.ostadmart.mappers.ProductCREATEMapper;
 import com.example.ostadmart.mappers.ProductUPDATEMapper;
 import com.example.ostadmart.mappers.ProductResponseMapper;
 import com.example.ostadmart.repositories.ProductRepository;
+import com.example.ostadmart.exceptions.UserNotFoundException;
 import com.example.ostadmart.exceptions.ProductNotFoundException;
 
 @Service
 public class ProductService {
 
+    private final AuthRepository authRepository;
     private final ProductRepository productRepository;
     private final ProductUPDATEMapper productUPDATEMapper;
     private final ProductCREATEMapper productCREATEMapper;
     private final ProductResponseMapper productResponseMapper;
 
     public ProductService(
+            AuthRepository authRepository,
             ProductRepository productRepository,
             ProductUPDATEMapper productUPDATEMapper,
             ProductCREATEMapper productCREATEMapper,
             ProductResponseMapper productResponseMapper
     ) {
+        this.authRepository = authRepository;
         this.productRepository = productRepository;
         this.productUPDATEMapper = productUPDATEMapper;
         this.productCREATEMapper = productCREATEMapper;
         this.productResponseMapper = productResponseMapper;
     }
 
-    public ProductResponseDTOAdmin createProduct(ProductCREATERequestDTO productCREATERequestDTO) {
+    public ProductResponseDTOAdmin createProduct(ProductCREATERequestDTO productCREATERequestDTO) throws UserNotFoundException {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        UserEntity userEntity = (UserEntity) userDetails;
+
+        Optional<UserEntity> userEntity = authRepository.findByEmail(userDetails.getUsername());
+
+        if (userEntity.isEmpty()) throw new UserNotFoundException("User not found");
 
         ProductEntity productEntity = productCREATEMapper.mapToEntity(productCREATERequestDTO);
-        productEntity.setCreated_by(userEntity);
-        productEntity.setUpdated_by(userEntity);
+        productEntity.setCreated_by(userEntity.get());
+        productEntity.setUpdated_by(userEntity.get());
 
         ProductEntity savedProductEntity = productRepository.save(productEntity);
 
