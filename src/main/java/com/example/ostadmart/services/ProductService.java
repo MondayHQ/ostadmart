@@ -6,13 +6,13 @@ import java.util.Optional;
 import com.example.ostadmart.dto.*;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-import com.example.ostadmart.models.UserEntity;
+import com.example.ostadmart.models.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 // Local Imports
-import com.example.ostadmart.models.ProductEntity;
+import com.example.ostadmart.models.Product;
 import com.example.ostadmart.repositories.AuthRepository;
 import com.example.ostadmart.mappers.ProductCREATEMapper;
 import com.example.ostadmart.mappers.ProductUPDATEMapper;
@@ -44,28 +44,28 @@ public class ProductService {
         this.productResponseMapper = productResponseMapper;
     }
 
-    public ProductResponseDTOAdmin createProduct(ProductCREATERequestDTO productCREATERequestDTO) throws UserNotFoundException {
+    public ProductResponseAdmin createProduct(ProductCREATERequest productCREATERequest) throws UserNotFoundException {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        Optional<UserEntity> userEntity = authRepository.findByEmail(userDetails.getUsername());
+        Optional<User> userEntity = authRepository.findByEmail(userDetails.getUsername());
 
         if (userEntity.isEmpty()) throw new UserNotFoundException("User not found");
 
-        ProductEntity productEntity = productCREATEMapper.mapToEntity(productCREATERequestDTO);
-        productEntity.setCreated_by(userEntity.get());
-        productEntity.setUpdated_by(userEntity.get());
+        Product product = productCREATEMapper.mapToEntity(productCREATERequest);
+        product.setCreatedBy(userEntity.get());
+        product.setUpdatedBy(userEntity.get());
 
-        ProductEntity savedProductEntity = productRepository.save(productEntity);
+        Product savedProduct = productRepository.save(product);
 
-        return productCREATEMapper.mapToResponseDTO(savedProductEntity);
+        return productCREATEMapper.mapToResponseDTO(savedProduct);
 
     }
 
     public List<? extends ProductResponse> getAllProducts() {
 
-        List<ProductEntity> productEntities = productRepository.findAll();
+        List<Product> productEntities = productRepository.findAll();
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -90,7 +90,7 @@ public class ProductService {
 
     public ProductResponse getProductById(Long id) throws ProductNotFoundException {
 
-        ProductEntity productEntity = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product not found"));
+        Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product not found"));
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -100,34 +100,34 @@ public class ProductService {
                 .anyMatch(a -> a.getAuthority().equals("ADMIN"));
 
         if (isAdmin) {
-            return productResponseMapper.mapToResponseDTOAdmin(productEntity);
+            return productResponseMapper.mapToResponseDTOAdmin(product);
         }
 
-        return productResponseMapper.mapToResponseDTO(productEntity);
+        return productResponseMapper.mapToResponseDTO(product);
 
     }
 
     @Transactional
     public ProductUPDATEResponseDTO updateProductById(Long id, ProductUPDATERequestDTO productUPDATERequestDTO) throws ProductNotFoundException {
 
-        ProductEntity savedProductEntity = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product not found"));
+        Product savedProduct = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product not found"));
 
-        UserEntity userEntity = (UserEntity) SecurityContextHolder
+        User user = (User) SecurityContextHolder
                 .getContext()
                 .getAuthentication()
                 .getPrincipal();
 
-        productUPDATEMapper.mapToExistingEntity(savedProductEntity, productUPDATERequestDTO);
-        savedProductEntity.setUpdated_by(userEntity);
+        productUPDATEMapper.mapToExistingEntity(savedProduct, productUPDATERequestDTO);
+        savedProduct.setUpdatedBy(user);
 
-        return productUPDATEMapper.mapToResponseDTO(savedProductEntity);
+        return productUPDATEMapper.mapToResponseDTO(savedProduct);
 
     }
 
     @Transactional
     public void deleteProductById(Long id) throws ProductNotFoundException {
-        ProductEntity savedProductEntity = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product not found"));
-        productRepository.delete(savedProductEntity);
+        Product savedProduct = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product not found"));
+        productRepository.delete(savedProduct);
     }
 
 }

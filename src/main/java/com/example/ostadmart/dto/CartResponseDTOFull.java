@@ -15,6 +15,6 @@ public class CartResponseDTOFull {
 
     private Long id;
     private Double total_amount;
-    private List<ProductResponseDTO> products;
+    private List<ProductResponseNormal> products;
 
 }

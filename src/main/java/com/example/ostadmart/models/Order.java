@@ -29,7 +29,7 @@ public class Order {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
-    private UserEntity userEntity;
+    private User user;
 
     @Column(name = "total_amount")
     private Double totalAmount;
@@ -45,9 +45,9 @@ public class Order {
     private LocalDateTime orderTime;
 
     @OneToMany(mappedBy = "order", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<OrderItem> orderItemEntities;
+    private List<OrderItem> orderItems;
 
     @OneToOne(mappedBy = "order", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private PaymentEntity paymentEntity;
+    private PaymentEntity payment;
 
 }

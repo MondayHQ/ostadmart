@@ -19,7 +19,7 @@ public class ProductUPDATEResponseDTO {
     private Integer qty_left;
     private String product_photo;
 
-    private UserDTO created_by;
-    private UserDTO updated_by;
+    private UserResponse created_by;
+    private UserResponse updated_by;
 
 }

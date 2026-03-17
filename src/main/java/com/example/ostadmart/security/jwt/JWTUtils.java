@@ -16,6 +16,9 @@ import java.util.Date;
 import java.util.HashMap;
 import javax.crypto.SecretKey;
 
+// Local Imports
+import com.example.ostadmart.models.User;
+
 @Component
 public class JWTUtils {
 
@@ -32,6 +35,7 @@ public class JWTUtils {
     public String generateToken(Authentication authentication) {
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        User user = (User) userDetails;
 
         List<String> roles = userDetails
                 .getAuthorities()
@@ -40,6 +44,8 @@ public class JWTUtils {
                 .toList();
 
         Map<String, Object> claims = new HashMap<>();
+
+        claims.put("userId", user.getId());
         claims.put("roles", roles);
 
         return Jwts

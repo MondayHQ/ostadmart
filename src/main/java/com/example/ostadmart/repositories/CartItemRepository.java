@@ -11,21 +11,20 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 // Local Imports
 import com.example.ostadmart.models.CartEntity;
-import com.example.ostadmart.models.ProductEntity;
-import com.example.ostadmart.models.CartItemEntity;
+import com.example.ostadmart.models.CartItem;
 
 @Repository
-public interface CartItemRepository extends JpaRepository<CartItemEntity, Long> {
+public interface CartItemRepository extends JpaRepository<CartItem, Long> {
 
-    Optional<CartItemEntity> findByCartEntityAndProductEntity(CartEntity cartEntity, ProductEntity productEntity);
+    Optional<CartItem> findByCart_IdAndProduct_Id(Long cartId, Long productId);
 
-    List<CartItemEntity> findAllByCartEntity(CartEntity cartEntity);
+    List<CartItem> findAllByCart(CartEntity cart);
 
-    @Query("SELECT COALESCE(SUM(A.unit_price * A.qty), 0.0) FROM CartItemEntity A WHERE A.cartEntity.id=:cartId")
+    @Query("SELECT COALESCE(SUM(A.unitPrice * A.quantity), 0.0) FROM CartItem A WHERE A.cart.id=:cartId")
     Double getTotalAmountByCartId(@Param("cartId") Long cartId);
 
     @Modifying
-    @Query("DELETE FROM CartItemEntity A WHERE A.cartEntity.id=:cartId")
+    @Query("DELETE FROM CartItem A WHERE A.cart.id=:cartId")
     void removeAllCartItemsByCartId(@Param("cartId") Long cartId);
 
 }

@@ -4,6 +4,8 @@ import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,7 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 // Local Imports
-import com.example.ostadmart.models.UserEntity;
+import com.example.ostadmart.models.User;
 import com.example.ostadmart.repositories.AuthRepository;
 
 @Configuration
@@ -30,7 +32,7 @@ public class ApplicationConfig {
             @Override
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-                Optional<UserEntity> user = authRepository.findByEmail(username);
+                Optional<User> user = authRepository.findByEmail(username);
 
                 if (user.isEmpty()) {
                     throw new UsernameNotFoundException("User not found");
@@ -49,7 +51,15 @@ public class ApplicationConfig {
 
     @Bean
     public ObjectMapper objectMapper() {
-        return new ObjectMapper();
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        // This is needed for proper conversion of LocalDateTime to string in Jackson
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        return mapper;
+
     }
 
 }

@@ -4,8 +4,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 // Local Imports
-import com.example.ostadmart.models.CartItemEntity;
-import com.example.ostadmart.dto.CartItemResponseDTO;
+import com.example.ostadmart.models.CartItem;
+import com.example.ostadmart.dto.CartItemResponse;
 
 @Component
 public class CartItemMapper {
@@ -16,8 +16,8 @@ public class CartItemMapper {
         this.modelMapper = modelMapper;
     }
 
-    public CartItemResponseDTO mapToResponseDTO(CartItemEntity cartItemEntity) {
-        return modelMapper.map(cartItemEntity, CartItemResponseDTO.class);
+    public CartItemResponse mapToResponseDTO(CartItem cartItem) {
+        return modelMapper.map(cartItem, CartItemResponse.class);
     }
 
 }

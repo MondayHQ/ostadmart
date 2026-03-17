@@ -6,9 +6,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 // Local Imports
-import com.example.ostadmart.models.UserEntity;
+import com.example.ostadmart.models.User;
 
 @Repository
-public interface AuthRepository extends JpaRepository<UserEntity, Long> {
-    Optional<UserEntity> findByEmail(String email);
+public interface AuthRepository extends JpaRepository<User, Long> {
+    Optional<User> findByEmail(String email);
 }

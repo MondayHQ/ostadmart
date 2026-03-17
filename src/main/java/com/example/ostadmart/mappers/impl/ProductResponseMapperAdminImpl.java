@@ -5,11 +5,11 @@ import org.springframework.stereotype.Component;
 
 // Local Imports
 import com.example.ostadmart.mappers.Mapper;
-import com.example.ostadmart.models.ProductEntity;
-import com.example.ostadmart.dto.ProductResponseDTOAdmin;
+import com.example.ostadmart.models.Product;
+import com.example.ostadmart.dto.ProductResponseAdmin;
 
 @Component
-public class ProductResponseMapperAdminImpl implements Mapper<ProductEntity, ProductResponseDTOAdmin> {
+public class ProductResponseMapperAdminImpl implements Mapper<Product, ProductResponseAdmin> {
 
     private final ModelMapper modelMapper;
 
@@ -18,13 +18,13 @@ public class ProductResponseMapperAdminImpl implements Mapper<ProductEntity, Pro
     }
 
     @Override
-    public ProductEntity mapToEntity(ProductResponseDTOAdmin productResponseDTOAdmin) {
-        return modelMapper.map(productResponseDTOAdmin, ProductEntity.class);
+    public Product mapToEntity(ProductResponseAdmin productResponseAdmin) {
+        return modelMapper.map(productResponseAdmin, Product.class);
     }
 
     @Override
-    public ProductResponseDTOAdmin mapToDTO(ProductEntity productEntity) {
-        return modelMapper.map(productEntity, ProductResponseDTOAdmin.class);
+    public ProductResponseAdmin mapToDTO(Product product) {
+        return modelMapper.map(product, ProductResponseAdmin.class);
     }
 
 }

@@ -28,7 +28,7 @@ public class OrderItem {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id")
-    private ProductEntity productEntity;
+    private Product product;
 
     @Column(name = "unit_price")
     private Double unitPrice;

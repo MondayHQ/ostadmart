@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 // Local Imports
-import com.example.ostadmart.dto.AuthRequestDTO;
-import com.example.ostadmart.dto.AuthResponseDTO;
+import com.example.ostadmart.dto.AuthRequest;
+import com.example.ostadmart.dto.AuthResponse;
 import com.example.ostadmart.services.AuthService;
-import com.example.ostadmart.dto.RegisterRequestDTO;
-import com.example.ostadmart.dto.RegisterResponseDTO;
+import com.example.ostadmart.dto.RegisterRequest;
+import com.example.ostadmart.dto.RegisterResponse;
 
 @RestController
 @RequestMapping(path = "/api/auth")
@@ -26,17 +26,17 @@ public class AuthController {
     }
 
     @PostMapping(path = "/register")
-    public ResponseEntity<RegisterResponseDTO> register(@Valid @RequestBody RegisterRequestDTO registerRequestDTO) {
-        RegisterResponseDTO registerResponseDTO = authService.register(registerRequestDTO);
+    public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
+        RegisterResponse registerResponse = authService.register(registerRequest);
 
-        return new ResponseEntity<>(registerResponseDTO, HttpStatus.CREATED);
+        return new ResponseEntity<>(registerResponse, HttpStatus.CREATED);
     }
 
     @PostMapping(path = "/login")
-    public ResponseEntity<AuthResponseDTO> login(@Valid @RequestBody AuthRequestDTO authRequestDTO) {
-        AuthResponseDTO authResponseDTO = authService.login(authRequestDTO);
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest authRequest) {
+        AuthResponse authResponse = authService.login(authRequest);
 
-        return new ResponseEntity<>(authResponseDTO, HttpStatus.OK);
+        return new ResponseEntity<>(authResponse, HttpStatus.OK);
     }
 
 }

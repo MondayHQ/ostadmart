@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 // Local Imports
 import com.example.ostadmart.services.CartService;
-import com.example.ostadmart.dto.CartItemResponseDTO;
+import com.example.ostadmart.dto.CartItemResponse;
 import com.example.ostadmart.dto.AddToCartRequestDTO;
 import com.example.ostadmart.dto.UpdateCartItemRequestDTO;
 import com.example.ostadmart.exceptions.ProductNotFoundException;
@@ -26,28 +26,28 @@ public class CartController {
     }
 
     @GetMapping(path = "/items")
-    public ResponseEntity<List<CartItemResponseDTO>> getAllCartItems() {
-        List<CartItemResponseDTO> cartItemResponseDTOS = cartService.getAllCartItems();
+    public ResponseEntity<List<CartItemResponse>> getAllCartItems() {
+        List<CartItemResponse> cartItemResponses = cartService.getAllCartItems();
 
-        return new ResponseEntity<>(cartItemResponseDTOS, HttpStatus.OK);
+        return new ResponseEntity<>(cartItemResponses, HttpStatus.OK);
     }
 
     @PostMapping(path = "/items")
-    public ResponseEntity<CartItemResponseDTO> addProductToCart(
+    public ResponseEntity<CartItemResponse> addProductToCart(
             @Valid @RequestBody AddToCartRequestDTO addToCartRequestDTO
     ) throws InsufficientStockException, ProductNotFoundException {
-        CartItemResponseDTO cartItemResponseDTO = cartService.addProductToCart(addToCartRequestDTO);
+        CartItemResponse cartItemResponse = cartService.addProductToCart(addToCartRequestDTO);
 
-        return ResponseEntity.ok(cartItemResponseDTO);
+        return ResponseEntity.ok(cartItemResponse);
     }
 
     @PutMapping(path = "/items/{id}")
-    public ResponseEntity<CartItemResponseDTO> updateCartItem(
+    public ResponseEntity<CartItemResponse> updateCartItem(
             @PathVariable Long id,
             @Valid @RequestBody UpdateCartItemRequestDTO updateCartItemRequestDTO
     ) throws ProductNotFoundException, InsufficientStockException {
-        CartItemResponseDTO cartItemResponseDTO = cartService.updateCartItem(id, updateCartItemRequestDTO);
-        return ResponseEntity.ok(cartItemResponseDTO);
+        CartItemResponse cartItemResponse = cartService.updateCartItem(id, updateCartItemRequestDTO);
+        return ResponseEntity.ok(cartItemResponse);
     }
 
     @DeleteMapping(path = "/items/{id}")

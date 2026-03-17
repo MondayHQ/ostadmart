@@ -8,9 +8,6 @@ import lombok.Builder;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import jakarta.validation.constraints.Size;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,40 +21,36 @@ import com.example.ostadmart.enums.Role;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
-public class UserEntity implements UserDetails {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @NotBlank
-    @Size(max = 64)
-    @Email
-    @Column(unique = true, length = 64)
+    @Column(name = "email", length = 128, unique = true, nullable = false)
     private String email;
 
-    @NotBlank
-    @Column(length = 60)
+    @Column(name = "password", length = 60, nullable = false)
     private String password;
 
-    @NotBlank
-    @Size(max = 64)
-    private String first_name;
+    @Column(name = "first_name", length = 64)
+    private String firstName;
 
-    @NotBlank
-    @Size(max = 64)
-    private String last_name;
+    @Column(name = "last_name", length = 64)
+    private String lastName;
 
-    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
     private Role role;
 
-    @Column(unique = true, length = 10)
+    @Column(name = "phone", length = 16, unique = true)
     private String phone;
 
-    @Column(length = 64)
+    @Column(name = "address", length = 64)
     private String address;
 
-    @Column(length = 512)
+    @Column(name = "profile_photo", length = 512)
     private String profilePhoto;
 
     @Override

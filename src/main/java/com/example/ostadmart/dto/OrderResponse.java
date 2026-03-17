@@ -7,13 +7,12 @@ import lombok.Data;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 // Local Imports
 import com.example.ostadmart.enums.OrderStatus;
-import com.example.ostadmart.models.UserEntity;
 import com.example.ostadmart.models.PaymentEntity;
-import com.example.ostadmart.models.OrderItem;
 
 @Data
 @Builder
@@ -23,9 +22,6 @@ public class OrderResponse {
 
     @JsonProperty("id")
     private Long id;
-
-    @JsonProperty("user_entity")
-    private UserEntity userEntity;
 
     @JsonProperty("total_amount")
     private Double totalAmount;
@@ -37,12 +33,13 @@ public class OrderResponse {
     private OrderStatus status;
 
     @JsonProperty("order_time")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime orderTime;
 
     @JsonProperty("order_items")
-    private List<OrderItem> orderItemEntities;
+    private List<OrderItemResponse> orderItems;
 
     @JsonProperty("payment")
-    private PaymentEntity paymentEntity;
+    private PaymentEntity payment;
 
 }

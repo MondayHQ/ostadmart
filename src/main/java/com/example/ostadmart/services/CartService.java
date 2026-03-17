@@ -8,12 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 // Local Imports
+import com.example.ostadmart.models.User;
+import com.example.ostadmart.models.Product;
+import com.example.ostadmart.models.CartItem;
 import com.example.ostadmart.models.CartEntity;
-import com.example.ostadmart.models.UserEntity;
-import com.example.ostadmart.models.ProductEntity;
-import com.example.ostadmart.models.CartItemEntity;
+import com.example.ostadmart.dto.CartItemResponse;
 import com.example.ostadmart.mappers.CartItemMapper;
-import com.example.ostadmart.dto.CartItemResponseDTO;
 import com.example.ostadmart.dto.AddToCartRequestDTO;
 import com.example.ostadmart.repositories.CartRepository;
 import com.example.ostadmart.dto.UpdateCartItemRequestDTO;
@@ -42,44 +42,45 @@ public class CartService {
         this.cartItemRepository = cartItemRepository;
     }
 
-    public void createCart(UserEntity userEntity) {
+    public void createCart(User user) {
 
         CartEntity cartEntity = new CartEntity();
-        cartEntity.setUserEntity(userEntity);
+        cartEntity.setUser(user);
         cartEntity.setTotalAmount(0.0);
 
         cartRepository.save(cartEntity);
     }
 
     @Transactional
-    public CartItemResponseDTO addProductToCart(AddToCartRequestDTO addToCartRequestDTO) throws ProductNotFoundException, InsufficientStockException {
+    public CartItemResponse addProductToCart(AddToCartRequestDTO addToCartRequestDTO) throws ProductNotFoundException, InsufficientStockException {
 
         // GET Product
-        ProductEntity productEntity = productRepository
+        Product product = productRepository
                 .findById(addToCartRequestDTO.getProductId())
                 .orElseThrow(() -> new ProductNotFoundException("Product not found"));
 
-        if (productEntity.getQty_left() < addToCartRequestDTO.getQty()) {
+        if (product.getQuantityLeft() < addToCartRequestDTO.getQty()) {
             throw new InsufficientStockException("Not enough stock available");
         }
 
         // GET user
-        UserEntity userEntity = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         // GET cart
-        CartEntity cartEntity = cartRepository.findByUserEntity(userEntity);
+        CartEntity cartEntity = cartRepository.findByUser_Id(user.getId());
 
-        Optional<CartItemEntity> existingCartItemEntity = cartItemRepository.findByCartEntityAndProductEntity(cartEntity, productEntity);
+        Optional<CartItem> existingCartItemEntity = cartItemRepository
+                .findByCart_IdAndProduct_Id(cartEntity.getId(), product.getId());
 
-        int requestedTotal = addToCartRequestDTO.getQty() + existingCartItemEntity.map(CartItemEntity::getQty).orElse(0);
-        if (productEntity.getQty_left() < requestedTotal) {
+        int requestedTotal = addToCartRequestDTO.getQty() + existingCartItemEntity.map(CartItem::getQuantity).orElse(0);
+        if (product.getQuantityLeft() < requestedTotal) {
             throw new InsufficientStockException("Not enough stock available");
         }
 
-        CartItemEntity cartItemEntity = existingCartItemEntity
+        CartItem cartItem = existingCartItemEntity
                 .map((item) -> {
 
-                    item.setQty(requestedTotal);
+                    item.setQuantity(requestedTotal);
                     cartItemRepository.flush();
 
                     cartEntity.setTotalAmount(cartItemRepository.getTotalAmountByCartId(cartEntity.getId()));
@@ -89,65 +90,65 @@ public class CartService {
                 })
                 .orElseGet(() -> {
 
-                    CartItemEntity newCartItemEntity = CartItemEntity.builder()
-                            .cartEntity(cartEntity)
-                            .productEntity(productEntity)
-                            .unit_price(productEntity.getPrice())
-                            .qty(addToCartRequestDTO.getQty())
+                    CartItem newCartItem = CartItem.builder()
+                            .cart(cartEntity)
+                            .product(product)
+                            .unitPrice(product.getPrice())
+                            .quantity(addToCartRequestDTO.getQty())
                             .build();
 
-                    CartItemEntity savedCartItemEntity = cartItemRepository.save(newCartItemEntity);
+                    CartItem savedCartItem = cartItemRepository.save(newCartItem);
                     cartEntity.setTotalAmount(cartItemRepository.getTotalAmountByCartId(cartEntity.getId()));
 
-                    return savedCartItemEntity;
+                    return savedCartItem;
 
                 });
 
-        return cartItemMapper.mapToResponseDTO(cartItemEntity);
+        return cartItemMapper.mapToResponseDTO(cartItem);
 
     }
 
-    public List<CartItemResponseDTO> getAllCartItems() {
+    public List<CartItemResponse> getAllCartItems() {
 
         // GET Authenticated user
-        UserEntity userEntity = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         // GET cart
-        CartEntity cartEntity = cartRepository.findByUserEntity(userEntity);
+        CartEntity cartEntity = cartRepository.findByUser_Id(user.getId());
 
-        List<CartItemEntity> cartItemEntities = cartItemRepository.findAllByCartEntity(cartEntity);
+        List<CartItem> cartItemEntities = cartItemRepository.findAllByCart(cartEntity);
 
         return cartItemEntities.stream().map(cartItemMapper::mapToResponseDTO).toList();
 
     }
 
     @Transactional
-    public CartItemResponseDTO updateCartItem(
+    public CartItemResponse updateCartItem(
             Long id,
             UpdateCartItemRequestDTO updateCartItemRequestDTO
     ) throws ProductNotFoundException, InsufficientStockException {
 
         // GET Authenticated user
-        UserEntity userEntity = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         // GET cart
-        CartEntity cartEntity = cartRepository.findByUserEntity(userEntity);
+        CartEntity cartEntity = cartRepository.findByUser_Id(user.getId());
 
         // Find the cart item
-        CartItemEntity existingCartItemEntity = cartItemRepository
+        CartItem existingCartItem = cartItemRepository
                 .findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("Item not found in the cart"));
 
-        if (existingCartItemEntity.getProductEntity().getQty_left() < updateCartItemRequestDTO.getQty()) {
+        if (existingCartItem.getProduct().getQuantityLeft() < updateCartItemRequestDTO.getQty()) {
             throw new InsufficientStockException("Not enough stock available");
         }
 
-        existingCartItemEntity.setQty(updateCartItemRequestDTO.getQty());
+        existingCartItem.setQuantity(updateCartItemRequestDTO.getQty());
         cartItemRepository.flush();
 
         cartEntity.setTotalAmount(cartItemRepository.getTotalAmountByCartId(cartEntity.getId()));
 
-        return cartItemMapper.mapToResponseDTO(existingCartItemEntity);
+        return cartItemMapper.mapToResponseDTO(existingCartItem);
 
     }
 
@@ -155,17 +156,17 @@ public class CartService {
     public void removeCartItem(Long id) throws ProductNotFoundException {
 
         // GET Authenticated user
-        UserEntity userEntity = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         // GET cart
-        CartEntity cartEntity = cartRepository.findByUserEntity(userEntity);
+        CartEntity cartEntity = cartRepository.findByUser_Id(user.getId());
 
         // Find the cart item
-        CartItemEntity existingCartItemEntity = cartItemRepository
+        CartItem existingCartItem = cartItemRepository
                 .findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("Item not found in the cart"));
 
-        cartItemRepository.delete(existingCartItemEntity);
+        cartItemRepository.delete(existingCartItem);
         cartItemRepository.flush();
 
         cartEntity.setTotalAmount(cartItemRepository.getTotalAmountByCartId(cartEntity.getId()));
@@ -176,10 +177,10 @@ public class CartService {
     public void clearCart() {
 
         // GET Authenticated user
-        UserEntity userEntity = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         // GET cart
-        CartEntity cartEntity = cartRepository.findByUserEntity(userEntity);
+        CartEntity cartEntity = cartRepository.findByUser_Id(user.getId());
 
         cartItemRepository.removeAllCartItemsByCartId(cartEntity.getId());
         cartRepository.flush();

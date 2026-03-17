@@ -5,11 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 // Local Imports
 import com.example.ostadmart.models.CartEntity;
-import com.example.ostadmart.models.UserEntity;
 
 @Repository
 public interface CartRepository extends JpaRepository<CartEntity, Long> {
-
-    CartEntity findByUserEntity(UserEntity userEntity);
-
+    CartEntity findByUser_Id(Long id);
 }

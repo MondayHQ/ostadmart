@@ -26,10 +26,10 @@ public class ProductController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ProductResponseDTOAdmin> createProduct(@Valid @RequestBody ProductCREATERequestDTO product) throws UserNotFoundException {
+    public ResponseEntity<ProductResponseAdmin> createProduct(@Valid @RequestBody ProductCREATERequest product) throws UserNotFoundException {
 
-        ProductResponseDTOAdmin productResponseDTOAdmin = productService.createProduct(product);
-        return new ResponseEntity<>(productResponseDTOAdmin, HttpStatus.CREATED);
+        ProductResponseAdmin productResponseAdmin = productService.createProduct(product);
+        return new ResponseEntity<>(productResponseAdmin, HttpStatus.CREATED);
 
     }
 

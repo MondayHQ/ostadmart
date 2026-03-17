@@ -21,7 +21,7 @@ public class CartEntity {
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
-    private UserEntity userEntity;
+    private User user;
 
     @Column(name = "total_amount")
     private Double totalAmount;

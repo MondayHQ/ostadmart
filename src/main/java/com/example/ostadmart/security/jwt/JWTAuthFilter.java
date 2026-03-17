@@ -11,13 +11,16 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+
+// Local Imports
+import com.example.ostadmart.enums.Role;
+import com.example.ostadmart.models.User;
 
 @Slf4j
 @Component
@@ -50,6 +53,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 
                 Claims payload = jwtUtils.validateToken(token);
 
+                Long userId = payload.get("userId", Long.class);
                 String username = payload.getSubject();
                 @SuppressWarnings("unchecked")
                 List<String> roles = payload.get("roles", List.class);
@@ -61,7 +65,12 @@ public class JWTAuthFilter extends OncePerRequestFilter {
                             .map(SimpleGrantedAuthority::new)
                             .toList();
 
-                    UserDetails userDetails = new User(username, "", authorities);
+                    UserDetails userDetails = User.builder()
+                            .id(userId)
+                            .email(username)
+                            .role(Role.valueOf(authorities.getFirst().getAuthority()))
+                            .build();
+
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,
                             null,

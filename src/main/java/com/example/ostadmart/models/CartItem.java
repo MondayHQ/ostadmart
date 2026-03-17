@@ -12,7 +12,7 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "cart_items")
-public class CartItemEntity {
+public class CartItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,14 +20,16 @@ public class CartItemEntity {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cart_id")
-    private CartEntity cartEntity;
+    private CartEntity cart;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id")
-    private ProductEntity productEntity;
+    private Product product;
 
-    private Double unit_price;
+    @Column(name = "unit_price")
+    private Double unitPrice;
 
-    private Integer qty;
+    @Column(name = "quantity")
+    private Integer quantity;
 
 }

@@ -5,11 +5,11 @@ import org.springframework.stereotype.Component;
 
 // Local Imports
 import com.example.ostadmart.mappers.Mapper;
-import com.example.ostadmart.models.UserEntity;
-import com.example.ostadmart.dto.RegisterRequestDTO;
+import com.example.ostadmart.models.User;
+import com.example.ostadmart.dto.RegisterRequest;
 
 @Component
-public class RegisterRequestMapperImpl implements Mapper<UserEntity, RegisterRequestDTO> {
+public class RegisterRequestMapperImpl implements Mapper<User, RegisterRequest> {
 
     private final ModelMapper modelMapper;
 
@@ -18,13 +18,13 @@ public class RegisterRequestMapperImpl implements Mapper<UserEntity, RegisterReq
     }
 
     @Override
-    public UserEntity mapToEntity(RegisterRequestDTO registerRequestDTO) {
-        return modelMapper.map(registerRequestDTO, UserEntity.class);
+    public User mapToEntity(RegisterRequest registerRequest) {
+        return modelMapper.map(registerRequest, User.class);
     }
 
     @Override
-    public RegisterRequestDTO mapToDTO(UserEntity userEntity) {
-        return modelMapper.map(userEntity, RegisterRequestDTO.class);
+    public RegisterRequest mapToDTO(User user) {
+        return modelMapper.map(user, RegisterRequest.class);
     }
 
 }

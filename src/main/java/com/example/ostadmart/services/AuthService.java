@@ -11,12 +11,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 // Local Imports
 import com.example.ostadmart.enums.Role;
 import com.example.ostadmart.mappers.Mapper;
-import com.example.ostadmart.models.UserEntity;
-import com.example.ostadmart.dto.AuthRequestDTO;
-import com.example.ostadmart.dto.AuthResponseDTO;
+import com.example.ostadmart.models.User;
+import com.example.ostadmart.dto.AuthRequest;
+import com.example.ostadmart.dto.AuthResponse;
 import com.example.ostadmart.security.jwt.JWTUtils;
-import com.example.ostadmart.dto.RegisterRequestDTO;
-import com.example.ostadmart.dto.RegisterResponseDTO;
+import com.example.ostadmart.dto.RegisterRequest;
+import com.example.ostadmart.dto.RegisterResponse;
 import com.example.ostadmart.repositories.AuthRepository;
 
 @Service
@@ -28,8 +28,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
-    private final Mapper<UserEntity, RegisterRequestDTO> registerRequestMapper;
-    private final Mapper<UserEntity, RegisterResponseDTO> registerResponseMapper;
+    private final Mapper<User, RegisterRequest> registerRequestMapper;
+    private final Mapper<User, RegisterResponse> registerResponseMapper;
 
     public AuthService(
             JWTUtils jwtUtils,
@@ -38,8 +38,8 @@ public class AuthService {
             PasswordEncoder passwordEncoder,
             UserDetailsService userDetailsService,
             AuthenticationManager authenticationManager,
-            Mapper<UserEntity, RegisterRequestDTO> registerRequestMapper,
-            Mapper<UserEntity, RegisterResponseDTO> registerResponseMapper
+            Mapper<User, RegisterRequest> registerRequestMapper,
+            Mapper<User, RegisterResponse> registerResponseMapper
     ) {
         this.jwtUtils = jwtUtils;
         this.cartService = cartService;
@@ -51,38 +51,38 @@ public class AuthService {
         this.registerResponseMapper = registerResponseMapper;
     }
 
-    public RegisterResponseDTO register(RegisterRequestDTO registerRequestDTO) {
+    public RegisterResponse register(RegisterRequest registerRequest) {
 
-        UserEntity userEntity = registerRequestMapper.mapToEntity(registerRequestDTO);
+        User user = registerRequestMapper.mapToEntity(registerRequest);
 
-        userEntity.setRole(Role.USER);
-        userEntity.setProfilePhoto("https://i.pravatar.cc/150?img=4");
-        userEntity.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
+        user.setRole(Role.USER);
+        user.setProfilePhoto("https://i.pravatar.cc/150?img=4");
+        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
 
-        UserEntity savedUserEntity = authRepository.save(userEntity);
+        User savedUser = authRepository.save(user);
 
         // ---------- CREATE cart ----------
-        cartService.createCart(savedUserEntity);
+        cartService.createCart(savedUser);
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(savedUserEntity.getEmail());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(savedUser.getEmail());
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                 userDetails,
                 null,
                 userDetails.getAuthorities()
         );
 
-        RegisterResponseDTO response = registerResponseMapper.mapToDTO(savedUserEntity);
+        RegisterResponse response = registerResponseMapper.mapToDTO(savedUser);
         response.setToken(jwtUtils.generateToken(authToken));
 
         return response;
 
     }
 
-    public AuthResponseDTO login(AuthRequestDTO authRequestDTO) {
+    public AuthResponse login(AuthRequest authRequest) {
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(
-                        authRequestDTO.getEmail(),
-                        authRequestDTO.getPassword()
+                        authRequest.getEmail(),
+                        authRequest.getPassword()
                 ));
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -92,7 +92,7 @@ public class AuthService {
 
         String authToken = jwtUtils.generateToken(authentication);
 
-        return AuthResponseDTO
+        return AuthResponse
                 .builder()
                 .email(email)
                 .role(role)

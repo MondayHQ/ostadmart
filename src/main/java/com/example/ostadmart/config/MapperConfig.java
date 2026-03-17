@@ -16,7 +16,7 @@ public class MapperConfig {
         modelMapper.getConfiguration().setSkipNullEnabled(true);
 
         // Handles nested object
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
         return modelMapper;
     }

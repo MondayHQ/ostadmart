@@ -4,7 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 // Local Imports
-import com.example.ostadmart.models.ProductEntity;
+import com.example.ostadmart.models.Product;
 import com.example.ostadmart.dto.ProductUPDATERequestDTO;
 import com.example.ostadmart.dto.ProductUPDATEResponseDTO;
 
@@ -18,18 +18,18 @@ public class ProductUPDATEMapper {
     }
 
     // ---------- Request Mapping ----------
-    public ProductEntity mapToEntity(ProductUPDATERequestDTO productUPDATERequestDTO) {
-        return modelMapper.map(productUPDATERequestDTO, ProductEntity.class);
+    public Product mapToEntity(ProductUPDATERequestDTO productUPDATERequestDTO) {
+        return modelMapper.map(productUPDATERequestDTO, Product.class);
     }
 
     // ---------- Response Mapping ----------
-    public ProductUPDATEResponseDTO mapToResponseDTO(ProductEntity productEntity) {
-        return modelMapper.map(productEntity, ProductUPDATEResponseDTO.class);
+    public ProductUPDATEResponseDTO mapToResponseDTO(Product product) {
+        return modelMapper.map(product, ProductUPDATEResponseDTO.class);
     }
 
     // ---------- Shallow Copy ----------
-    public void mapToExistingEntity(ProductEntity productEntity, ProductUPDATERequestDTO productUPDATERequestDTO) {
-        modelMapper.map(productUPDATERequestDTO, productEntity);
+    public void mapToExistingEntity(Product product, ProductUPDATERequestDTO productUPDATERequestDTO) {
+        modelMapper.map(productUPDATERequestDTO, product);
     }
 
 }

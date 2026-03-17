@@ -4,9 +4,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 // Local Imports
-import com.example.ostadmart.models.ProductEntity;
-import com.example.ostadmart.dto.ProductCREATERequestDTO;
-import com.example.ostadmart.dto.ProductResponseDTOAdmin;
+import com.example.ostadmart.models.Product;
+import com.example.ostadmart.dto.ProductCREATERequest;
+import com.example.ostadmart.dto.ProductResponseAdmin;
 
 @Component
 public class ProductCREATEMapper {
@@ -18,13 +18,13 @@ public class ProductCREATEMapper {
     }
 
     // ---------- Request Mapping ----------
-    public ProductEntity mapToEntity(ProductCREATERequestDTO productCREATERequestDTO) {
-        return modelMapper.map(productCREATERequestDTO, ProductEntity.class);
+    public Product mapToEntity(ProductCREATERequest productCREATERequest) {
+        return modelMapper.map(productCREATERequest, Product.class);
     }
 
     // ---------- Response Mapping ----------
-    public ProductResponseDTOAdmin mapToResponseDTO(ProductEntity productEntity) {
-        return modelMapper.map(productEntity, ProductResponseDTOAdmin.class);
+    public ProductResponseAdmin mapToResponseDTO(Product product) {
+        return modelMapper.map(product, ProductResponseAdmin.class);
     }
 
 }

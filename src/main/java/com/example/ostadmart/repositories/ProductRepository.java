@@ -4,7 +4,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 // Local Imports
-import com.example.ostadmart.models.ProductEntity;
+import com.example.ostadmart.models.Product;
 
 @Repository
-public interface ProductRepository extends JpaRepository<ProductEntity, Long> {}
+public interface ProductRepository extends JpaRepository<Product, Long> {}
