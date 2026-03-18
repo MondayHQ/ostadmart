@@ -2,6 +2,7 @@ package com.example.ostadmart.services;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import lombok.RequiredArgsConstructor;
@@ -66,7 +67,7 @@ public class OrderService {
         // CREATE order
         Order order = Order.builder()
                 .user(user)
-                .totalAmount(totalAmount)
+                .totalAmount(BigDecimal.valueOf(totalAmount))
                 .isPaid(false)
                 .status(OrderStatus.PENDING)
                 .orderTime(LocalDateTime.now())

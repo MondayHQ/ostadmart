@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 // Local Imports
@@ -31,8 +32,8 @@ public class Order {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "total_amount")
-    private Double totalAmount;
+    @Column(name = "total_amount", nullable = false, precision = 19, scale = 4)
+    private BigDecimal totalAmount;
 
     @Column(name = "is_paid")
     private Boolean isPaid;
@@ -44,10 +45,10 @@ public class Order {
     @Column(name = "order_time")
     private LocalDateTime orderTime;
 
-    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
 
-    @OneToOne(mappedBy = "order", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private PaymentEntity payment;
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Payment> payments;
 
 }

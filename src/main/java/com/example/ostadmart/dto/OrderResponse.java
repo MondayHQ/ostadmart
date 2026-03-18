@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 // Local Imports
 import com.example.ostadmart.enums.OrderStatus;
-import com.example.ostadmart.models.PaymentEntity;
+import com.example.ostadmart.models.Payment;
 
 @Data
 @Builder
@@ -40,6 +40,6 @@ public class OrderResponse {
     private List<OrderItemResponse> orderItems;
 
     @JsonProperty("payment")
-    private PaymentEntity payment;
+    private Payment payment;
 
 }
