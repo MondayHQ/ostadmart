@@ -49,4 +49,19 @@ public class PaymentController {
 
     }
 
+    @PostMapping(path = "/validate")
+    public ResponseEntity<String> validatePayment(@Valid @RequestBody PaymentRequest paymentRequest) {
+
+        log.info("Received IPN request: {}", requestParams);
+
+        String result = paymentService.finalizePayment(requestParams);
+
+        if ("OK".equals(result)) {
+            return ResponseEntity.ok("OK");
+        }
+
+        return ResponseEntity.badRequest().body("Invalid IPN");
+
+    }
+
 }
